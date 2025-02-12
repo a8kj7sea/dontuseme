@@ -53,6 +53,6 @@ database.disconnect();
   <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
-      <version>5.0.1</version> <!-- Use the latest version -->
+      <version>3.4.0</version> <!-- Use the latest version -->
   </dependency>
   ```
