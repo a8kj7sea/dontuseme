@@ -1,4 +1,4 @@
-package me.a8kj.database.impl;
+package me.a8kj.test.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,6 +16,23 @@ import me.a8kj.database.exception.DatabaseExceptionBase;
 import me.a8kj.database.exception.impl.InvalidPropertiesException;
 import me.a8kj.database.enums.ConnectionMessages;
 
+/**
+ * SQLDatabase class implements the Database interface and manages the
+ * connection
+ * to a SQL database.
+ * <p>
+ * This class is responsible for handling the connection lifecycle, including
+ * establishing the connection, disconnecting, restarting, and updating the
+ * status
+ * of the connection. It uses credentials provided through the
+ * DatabaseCredentials
+ * interface and interacts with the specified DatabaseCycle for actions like
+ * connect, disconnect, and restart.
+ * </p>
+ * 
+ * @param <Cycle> The type of the cycle (DatabaseCycle).
+ * @author a8kj7sea
+ */
 @Getter
 public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle> {
 
@@ -26,6 +43,13 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
     private DatabaseCredentials<BasicCredentials> credentials;
     private Connection connection;
 
+    /**
+     * Constructor to initialize the SQLDatabase with the specified name and cycle.
+     * 
+     * @param name  The name of the database.
+     * @param cycle The cycle object that defines actions during connection
+     *              lifecycle.
+     */
     public SQLDatabase(String name, Cycle cycle) {
         this.name = name;
         this.status = ConnectionStatus.DISCONNECTED;
@@ -35,6 +59,11 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
         this.connectionContainer = new ConnectionContainer<>();
     }
 
+    /**
+     * Updates the connection status and prints the relevant message.
+     * 
+     * @param status The new connection status to set.
+     */
     @Override
     public void updateConnectionStatus(ConnectionStatus status) {
         this.status = status;
@@ -54,6 +83,11 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
         }
     }
 
+    /**
+     * Establishes a connection to the database using the provided credentials.
+     * 
+     * @throws DatabaseExceptionBase If connection cannot be established.
+     */
     @Override
     public void connect() {
         if (status == ConnectionStatus.CONNECTED) {
@@ -82,6 +116,12 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
         }
     }
 
+    /**
+     * Restarts the database connection by disconnecting and reconnecting.
+     * 
+     * @throws DatabaseExceptionBase If any error occurs while restarting the
+     *                               connection.
+     */
     @Override
     public void restart() {
         disconnect();
@@ -89,6 +129,11 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
         this.cycle.onRestart();
     }
 
+    /**
+     * Disconnects from the database if connected.
+     * 
+     * @throws DatabaseExceptionBase If no active connection exists to disconnect.
+     */
     @Override
     public void disconnect() {
         if (status == ConnectionStatus.DISCONNECTED) {
@@ -107,6 +152,11 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
         }
     }
 
+    /**
+     * Checks whether the database is connected.
+     * 
+     * @return true if the database is connected, otherwise false.
+     */
     @Override
     public boolean isConnected() {
         try {
@@ -117,6 +167,12 @@ public class SQLDatabase<Cycle extends DatabaseCycle> implements Database<Cycle>
         }
     }
 
+    /**
+     * Sets the credentials for the database connection.
+     * 
+     * @param credentials The credentials to set for the connection.
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public void setCredentials(DatabaseCredentials<? extends Enum<? extends CredentialsKey>> credentials) {
         this.credentials = (DatabaseCredentials<BasicCredentials>) credentials;
