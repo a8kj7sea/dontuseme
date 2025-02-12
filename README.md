@@ -1,3 +1,5 @@
+# ZobreLib
+
 ### **Getting Started with ZobreLib**
 
 To begin, the library currently only supports the `HikariCP` implementation for database connections. You can use it as is, but the library is designed for flexibility and easy expansion to support more database implementations in the future.
